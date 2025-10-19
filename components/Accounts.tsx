@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Account } from '../types';
 import { PlusIcon, TrashIcon } from './icons';
@@ -113,11 +112,17 @@ const Accounts: React.FC<AccountsProps> = ({ accounts, setAccounts }) => {
         <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
             <div className="bg-whatsapp-light p-8 rounded-lg w-full max-w-md text-center text-white">
                 <h2 className="text-2xl font-bold mb-4">Verifying {verifyingAccount.name}</h2>
-                <p className="text-whatsapp-gray mb-4">Scan the QR code with your WhatsApp to link the device.</p>
-                <div className="p-4 bg-white inline-block rounded-lg">
-                    <img src="https://picsum.photos/256/256" alt="QR Code" />
+                <div className="p-6 bg-whatsapp-dark border border-dashed border-gray-600 rounded-lg text-center">
+                    <svg className="w-16 h-16 mx-auto text-whatsapp-gray" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 4.875c0-1.036.84-1.875 1.875-1.875h4.5c1.036 0 1.875.84 1.875 1.875v4.5c0 1.036-.84 1.875-1.875 1.875h-4.5A1.875 1.875 0 013.75 9.375v-4.5zM3.75 14.625c0-1.036.84-1.875 1.875-1.875h4.5c1.036 0 1.875.84 1.875 1.875v4.5c0 1.036-.84 1.875-1.875 1.875h-4.5a1.875 1.875 0 01-1.875-1.875v-4.5zM13.5 4.875c0-1.036.84-1.875 1.875-1.875h4.5c1.036 0 1.875.84 1.875 1.875v4.5c0 1.036-.84 1.875-1.875 1.875h-4.5A1.875 1.875 0 0113.5 9.375v-4.5z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 14.625c0-1.036.84-1.875 1.875-1.875h4.5c1.036 0 1.875.84 1.875 1.875v4.5c0 1.036-.84 1.875-1.875 1.875h-4.5a1.875 1.875 0 01-1.875-1.875v-4.5z" />
+                    </svg>
+                    <h3 className="text-lg font-semibold mt-4">Simulation Mode</h3>
+                    <p className="text-whatsapp-gray text-sm mt-1">
+                        In a real application, you would scan a QR code. This account will be automatically verified for demonstration purposes.
+                    </p>
                 </div>
-                 <p className="mt-4 text-sm animate-pulse">Waiting for scan...</p>
+                 <p className="mt-4 text-sm animate-pulse">Simulating verification...</p>
             </div>
         </div>
       )}

@@ -16,6 +16,7 @@ const Campaigns: React.FC<CampaignsProps> = ({ campaigns, setCampaigns, contacts
   const [currentCampaign, setCurrentCampaign] = useState<Partial<Campaign>>({});
   const [selectedContacts, setSelectedContacts] = useState<Contact[]>([]);
   const [isGeneratingAI, setIsGeneratingAI] = useState(false);
+  const [confirmingStart, setConfirmingStart] = useState<Campaign | null>(null);
   const sendingIntervals = useRef<Record<string, number>>({});
 
   const handleSaveCampaign = () => {
@@ -45,29 +46,39 @@ const Campaigns: React.FC<CampaignsProps> = ({ campaigns, setCampaigns, contacts
     const campaign = campaigns.find(c => c.id === campaignId);
     if(!campaign) return;
 
-    // FIX: Use window.setInterval to ensure the return type is 'number' in browser environments, avoiding conflict with NodeJS.Timeout type.
     const interval = window.setInterval(() => {
-        if (sentCount >= campaign.contacts.length) {
-            // FIX: Use window.clearInterval to match window.setInterval.
-            window.clearInterval(interval);
-            setCampaigns(prev => prev.map(c => c.id === campaignId ? { ...c, status: CampaignStatus.Completed } : c));
-            return;
-        }
-
-        sentCount++;
-        const isSuccess = Math.random() > 0.1; // 90% success rate
-        
-        setCampaigns(prev => prev.map(c => c.id === campaignId ? {
-            ...c,
-            progress: { 
-                ...c.progress,
-                sent: c.progress.sent + (isSuccess ? 1 : 0),
-                failed: c.progress.failed + (isSuccess ? 0 : 1),
+        const currentCampaignState = campaigns.find(c => c.id === campaignId);
+        // Use a function for setCampaigns to get the latest state
+        setCampaigns(prev => {
+            const campaignToUpdate = prev.find(c => c.id === campaignId);
+            if (!campaignToUpdate || (campaignToUpdate.progress.sent + campaignToUpdate.progress.failed) >= campaignToUpdate.progress.total) {
+                window.clearInterval(interval);
+                // Final update to completed status
+                return prev.map(c => c.id === campaignId ? { ...c, status: CampaignStatus.Completed } : c);
             }
-        } : c));
+
+            const isSuccess = Math.random() > 0.1; // 90% success rate
+            
+            return prev.map(c => c.id === campaignId ? {
+                ...c,
+                progress: { 
+                    ...c.progress,
+                    sent: c.progress.sent + (isSuccess ? 1 : 0),
+                    failed: c.progress.failed + (isSuccess ? 0 : 1),
+                }
+            } : c);
+        });
+
     }, (campaign.delay.min + Math.random() * (campaign.delay.max - campaign.delay.min)) * 1000);
     
     sendingIntervals.current[campaignId] = interval;
+  };
+  
+  const handleConfirmStart = () => {
+    if (confirmingStart) {
+        startSending(confirmingStart.id);
+    }
+    setConfirmingStart(null);
   };
 
   const handleGenerateAIMessage = async () => {
@@ -82,7 +93,6 @@ const Campaigns: React.FC<CampaignsProps> = ({ campaigns, setCampaigns, contacts
 
   const deleteCampaign = (id: string) => {
     if(sendingIntervals.current[id]) {
-      // FIX: Use window.clearInterval to match window.setInterval.
       window.clearInterval(sendingIntervals.current[id]);
       delete sendingIntervals.current[id];
     }
@@ -97,7 +107,7 @@ const Campaigns: React.FC<CampaignsProps> = ({ campaigns, setCampaigns, contacts
         }
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [campaigns, new Date().getMinutes()]); // Check every minute
+  }, [campaigns]); 
 
   return (
     <div>
@@ -130,7 +140,7 @@ const Campaigns: React.FC<CampaignsProps> = ({ campaigns, setCampaigns, contacts
                         {c.status}
                      </span>
                      {c.status === CampaignStatus.Draft && (
-                        <button onClick={() => startSending(c.id)} className="bg-whatsapp-green-light text-white font-bold py-1 px-3 rounded-lg flex items-center text-sm">
+                        <button onClick={() => setConfirmingStart(c)} className="bg-whatsapp-green-light text-white font-bold py-1 px-3 rounded-lg flex items-center text-sm">
                             <RocketIcon /> Start
                         </button>
                      )}
@@ -213,11 +223,28 @@ const Campaigns: React.FC<CampaignsProps> = ({ campaigns, setCampaigns, contacts
                 </div>
             </div>
 
-            <div className="flex justify-end mt-8">
+            <div className="flex justify-end mt-8 items-center">
+              <p className="text-xs text-whatsapp-gray mr-auto">Note: This is a UI simulation. Campaigns will not send real messages.</p>
               <button onClick={() => setShowModal(false)} className="text-gray-300 mr-4">Cancel</button>
               <button onClick={handleSaveCampaign} className="bg-whatsapp-teal text-white font-bold py-2 px-4 rounded">Save Campaign</button>
             </div>
           </div>
+        </div>
+      )}
+
+      {confirmingStart && (
+        <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
+            <div className="bg-whatsapp-light p-8 rounded-lg w-full max-w-md text-center">
+                <h2 className="text-2xl font-bold text-gray-100 mb-4">Start Campaign Simulation?</h2>
+                <p className="text-whatsapp-gray mb-6">
+                    This is a UI demonstration. No actual WhatsApp messages will be sent to your contacts.
+                    The app will only simulate the sending process.
+                </p>
+                <div className="flex justify-center gap-4">
+                    <button onClick={() => setConfirmingStart(null)} className="text-gray-300 py-2 px-6 rounded-lg bg-whatsapp-dark hover:bg-gray-700">Cancel</button>
+                    <button onClick={handleConfirmStart} className="bg-whatsapp-teal text-white font-bold py-2 px-6 rounded-lg hover:bg-opacity-80">Proceed</button>
+                </div>
+            </div>
         </div>
       )}
     </div>
