@@ -1,5 +1,8 @@
+// amgdsmousa/wasenderv1/wasenderv1-160b4548a298319ce0836e300a9572279a65dbab/package.json
+
 {
   "name": "whatsapp-pro-sender",
+  "homepage": "https://amgdmousa.github.io/wasenderv1", // <-- Add this line
   "private": true,
   "version": "0.0.0",
   "type": "module",
