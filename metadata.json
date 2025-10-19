@@ -1,0 +1,5 @@
+{
+  "name": "WhatsApp Pro Sender",
+  "description": "A comprehensive WhatsApp bulk messaging and contact management dashboard. This application provides tools to manage multiple accounts, import contacts, create and schedule multimedia messaging campaigns with spintax support, and simulate sending processes with configurable delays. Note: This is a UI simulation and does not actually connect to or interact with WhatsApp services.",
+  "requestFramePermissions": []
+}
