@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Account } from '../types';
-import { PlusIcon, TrashIcon } from './icons';
+import { PlusIcon, TrashIcon, InfoIcon } from './icons';
 import { generateId, formatPhoneNumber } from '../utils/helpers';
 
 interface AccountsProps {
@@ -113,10 +113,7 @@ const Accounts: React.FC<AccountsProps> = ({ accounts, setAccounts }) => {
             <div className="bg-whatsapp-light p-8 rounded-lg w-full max-w-md text-center text-white">
                 <h2 className="text-2xl font-bold mb-4">Verifying {verifyingAccount.name}</h2>
                 <div className="p-6 bg-whatsapp-dark border border-dashed border-gray-600 rounded-lg text-center">
-                    <svg className="w-16 h-16 mx-auto text-whatsapp-gray" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 4.875c0-1.036.84-1.875 1.875-1.875h4.5c1.036 0 1.875.84 1.875 1.875v4.5c0 1.036-.84 1.875-1.875 1.875h-4.5A1.875 1.875 0 013.75 9.375v-4.5zM3.75 14.625c0-1.036.84-1.875 1.875-1.875h4.5c1.036 0 1.875.84 1.875 1.875v4.5c0 1.036-.84 1.875-1.875 1.875h-4.5a1.875 1.875 0 01-1.875-1.875v-4.5zM13.5 4.875c0-1.036.84-1.875 1.875-1.875h4.5c1.036 0 1.875.84 1.875 1.875v4.5c0 1.036-.84 1.875-1.875 1.875h-4.5A1.875 1.875 0 0113.5 9.375v-4.5z" />
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 14.625c0-1.036.84-1.875 1.875-1.875h4.5c1.036 0 1.875.84 1.875 1.875v4.5c0 1.036-.84 1.875-1.875 1.875h-4.5a1.875 1.875 0 01-1.875-1.875v-4.5z" />
-                    </svg>
+                    <InfoIcon className="w-16 h-16 mx-auto text-whatsapp-gray" />
                     <h3 className="text-lg font-semibold mt-4">Simulation Mode</h3>
                     <p className="text-whatsapp-gray text-sm mt-1">
                         In a real application, you would scan a QR code. This account will be automatically verified for demonstration purposes.
