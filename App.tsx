@@ -9,23 +9,33 @@ import { Account, Contact, Campaign } from './types';
 
 type View = 'dashboard' | 'accounts' | 'contacts' | 'campaigns' | 'analytics';
 
+const loadFromLocalStorage = <T,>(key: string, reviver?: (key: string, value: any) => any): T[] => {
+  try {
+    const saved = localStorage.getItem(key);
+    if (saved) {
+      const parsed = JSON.parse(saved, reviver);
+      if (Array.isArray(parsed)) {
+        return parsed;
+      }
+    }
+  } catch (error) {
+    console.error(`Failed to load or parse ${key} from localStorage`, error);
+  }
+  return [];
+};
+
 const App: React.FC = () => {
   const [currentView, setCurrentView] = useState<View>('dashboard');
 
-  const [accounts, setAccounts] = useState<Account[]>(() => {
-    const saved = localStorage.getItem('wa-accounts');
-    return saved ? JSON.parse(saved) : [];
-  });
-  const [contacts, setContacts] = useState<Contact[]>(() => {
-    const saved = localStorage.getItem('wa-contacts');
-    return saved ? JSON.parse(saved) : [];
-  });
+  const [accounts, setAccounts] = useState<Account[]>(() => loadFromLocalStorage<Account>('wa-accounts'));
+  const [contacts, setContacts] = useState<Contact[]>(() => loadFromLocalStorage<Contact>('wa-contacts'));
   const [campaigns, setCampaigns] = useState<Campaign[]>(() => {
-    const saved = localStorage.getItem('wa-campaigns');
-    // Need to re-hydrate Date objects
-    const parsed = saved ? JSON.parse(saved) : [];
-    return parsed.map((c: Campaign) => ({ ...c, schedule: c.schedule ? new Date(c.schedule) : undefined }));
+    return loadFromLocalStorage<Campaign>('wa-campaigns').map(c => ({
+      ...c,
+      schedule: c.schedule ? new Date(c.schedule) : undefined,
+    }));
   });
+
 
   useEffect(() => {
     localStorage.setItem('wa-accounts', JSON.stringify(accounts));
